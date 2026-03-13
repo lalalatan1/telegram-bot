@@ -9,13 +9,15 @@ COPY src ./src
 # Tiến hành Build dự án thành file .jar
 RUN mvn clean package -DskipTests
 
-# Stage 2: Môi trường chạy siêu nhẹ
+# Stage 2: Môi trường chạy siêu nhẹ của Ubuntu (Jammy)
 FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 
-# Cài đặt trình duyệt Chromium và WebDriver để chạy giải pháp cào dữ liệu Selenium
-RUN apt-get update && \
-    apt-get install -y chromium chromium-driver && \
+# Khắc phục lỗi apt-get install bằng cách cài đặt trực tiếp Google Chrome bản Stable chuẩn
+RUN apt-get update && apt-get install -y wget gnupg && \
+    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' && \
+    apt-get update && apt-get install -y google-chrome-stable && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy tệp .jar từ giai đoạn build ở trên sang
