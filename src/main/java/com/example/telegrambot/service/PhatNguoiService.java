@@ -99,6 +99,9 @@ public class PhatNguoiService {
         options.addArguments("--headless=new");
         options.addArguments("--disable-gpu");
         options.addArguments("--window-size=1920,1080");
+        options.addArguments("--no-sandbox"); // Bắt buộc khi chạy trên Docker/Linux server
+        options.addArguments("--disable-dev-shm-usage"); // Tránh lỗi crash WebDriver do thiếu RAM
+        options.addArguments("--remote-allow-origins=*");
 
         WebDriver driver = new ChromeDriver(options);
 

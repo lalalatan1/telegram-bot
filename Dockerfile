@@ -13,6 +13,11 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 
+# Cài đặt trình duyệt Chromium và WebDriver để chạy giải pháp cào dữ liệu Selenium
+RUN apt-get update && \
+    apt-get install -y chromium chromium-driver && \
+    rm -rf /var/lib/apt/lists/*
+
 # Copy tệp .jar từ giai đoạn build ở trên sang
 COPY --from=build /app/target/telegram-bot-0.0.1-SNAPSHOT.jar app.jar
 
