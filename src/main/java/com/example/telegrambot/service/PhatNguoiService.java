@@ -105,7 +105,6 @@ public class PhatNguoiService {
         options.addArguments("--disable-setuid-sandbox");
         options.addArguments("--disable-extensions");
         options.addArguments("--disable-features=NetworkService");
-        options.addArguments("--single-process"); // Giảm tối đa dung lượng RAM tiêu thụ trên mây
 
         WebDriver driver = new ChromeDriver(options);
 
