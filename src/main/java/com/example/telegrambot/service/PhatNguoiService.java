@@ -102,6 +102,10 @@ public class PhatNguoiService {
         options.addArguments("--no-sandbox"); // Bắt buộc khi chạy trên Docker/Linux server
         options.addArguments("--disable-dev-shm-usage"); // Tránh lỗi crash WebDriver do thiếu RAM
         options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--disable-setuid-sandbox");
+        options.addArguments("--disable-extensions");
+        options.addArguments("--disable-features=NetworkService");
+        options.addArguments("--single-process"); // Giảm tối đa dung lượng RAM tiêu thụ trên mây
 
         WebDriver driver = new ChromeDriver(options);
 
