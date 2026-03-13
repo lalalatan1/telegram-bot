@@ -50,7 +50,8 @@ public class MyBot extends TelegramLongPollingBot {
                 chatId = update.getMessage().getChatId();
             }
 
-            if (chatId == null) return;
+            if (chatId == null)
+                return;
 
             long currentTime = System.currentTimeMillis();
             Long lastTime = lastActivity.get(chatId);
@@ -64,7 +65,8 @@ public class MyBot extends TelegramLongPollingBot {
             String text = (update.hasMessage() && update.getMessage().hasText()) ? update.getMessage().getText() : null;
             String data = update.hasCallbackQuery() ? update.getCallbackQuery().getData() : null;
 
-            // Xử lý Welcome Screen nếu chưa bắt đầu (chưa bấm nút Bắt đầu hoặc vừa quá 5 phút)
+            // Xử lý Welcome Screen nếu chưa bắt đầu (chưa bấm nút Bắt đầu hoặc vừa quá 5
+            // phút)
             if ((text != null && text.equals("/start")) || !isStarted.getOrDefault(chatId, false)) {
                 if (data != null && data.equals("begin_session")) {
                     isStarted.put(chatId, true);
@@ -107,7 +109,8 @@ public class MyBot extends TelegramLongPollingBot {
                     SendMessage message = new SendMessage();
                     message.setChatId(chatId.toString());
                     String typeName = "xe_hoi".equals(data) ? "Ô tô 🚗" : "Xe máy 🏍️";
-                    message.setText("✍️ *Bạn đã chọn " + typeName + "*\n\nVui lòng nhập biển số phương tiện cần tra cứu\n_(VD: 30A12345, 59X11223)_:");
+                    message.setText("✍️ *Bạn đã chọn " + typeName
+                            + "*\n\nVui lòng nhập biển số phương tiện cần tra cứu\n_(VD: 30A12345, 59X11223)_:");
                     message.setParseMode("Markdown");
                     execute(message);
                     return;
@@ -189,17 +192,17 @@ public class MyBot extends TelegramLongPollingBot {
                         LocalDate yesterday = today.minusDays(1);
                         LocalDate lastWeek = today.minusWeeks(1);
                         LocalDate lastMonth = today.minusMonths(1);
-                        
+
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                        
+
                         java.util.Map<String, Double> pricesToday = getPetrolPrices(today.format(formatter));
                         java.util.Map<String, Double> pricesYesterday = getPetrolPrices(yesterday.format(formatter));
                         java.util.Map<String, Double> pricesLastWeek = getPetrolPrices(lastWeek.format(formatter));
                         java.util.Map<String, Double> pricesLastMonth = getPetrolPrices(lastMonth.format(formatter));
-                        
+
                         StringBuilder sb = new StringBuilder();
                         sb.append("⛽ *Giá Xăng Dầu*\n\n");
-                        
+
                         if (pricesToday.isEmpty()) {
                             sb.append("❌ Không có dữ liệu cho hôm nay.\n");
                         } else {
@@ -213,13 +216,13 @@ public class MyBot extends TelegramLongPollingBot {
                                 sb.append("\n");
                             }
                         }
-                        
+
                         message.setText(sb.toString());
                         message.setParseMode("Markdown");
                     } catch (Exception e) {
                         message.setText("❌ Lỗi khi lấy dữ liệu xăng dầu.");
                     }
-                    
+
                     InlineKeyboardButton buttonEnd = ButtonFactory.button("↩️ Menu chính", "end");
                     drawUIComponent(message, List.of(buttonEnd));
                     execute(message);
@@ -244,22 +247,25 @@ public class MyBot extends TelegramLongPollingBot {
 
                     try {
                         RestTemplate rest = new RestTemplate();
-                        String url = "http://localhost:8080/api/phatnguoi/check?bienso=" + bienSo + "&loaixe="
+                        String url = "http://localhost:8000/api/phatnguoi/check?bienso=" + bienSo + "&loaixe="
                                 + userVehicleType.getOrDefault(chatId, "1");
 
                         String resultStr = rest.getForObject(url, String.class);
                         message.setChatId(chatId.toString());
-                        
+
                         if ("0".equals(resultStr)) {
-                            message.setText("✅ *Tuyệt vời!*\nPhương tiện mang biển số `" + bienSo + "` hiện tại **KHÔNG CÓ** lỗi vi phạm phạt nguội nào trên hệ thống.");
+                            message.setText("✅ *Tuyệt vời!*\nPhương tiện mang biển số `" + bienSo
+                                    + "` hiện tại **KHÔNG CÓ** lỗi vi phạm phạt nguội nào trên hệ thống.");
                         } else {
-                            message.setText("⚠️ *PHÁT HIỆN VI PHẠM!* ⚠️\n\nChi tiết lỗi phạt nguội của biển số `" + bienSo + "`:\n\n" + resultStr);
+                            message.setText("⚠️ *PHÁT HIỆN VI PHẠM!* ⚠️\n\nChi tiết lỗi phạt nguội của biển số `"
+                                    + bienSo + "`:\n\n" + resultStr);
                         }
                         message.setParseMode("Markdown");
                         execute(message);
                     } catch (Exception e) {
                         message.setChatId(chatId.toString());
-                        message.setText("❌ Rất tiếc, máy chủ tra cứu đang gặp sự cố hoặc quá tải. Vui lòng thử lại sau.");
+                        message.setText(
+                                "❌ Rất tiếc, máy chủ tra cứu đang gặp sự cố hoặc quá tải. Vui lòng thử lại sau.");
                         execute(message);
                     }
 
@@ -361,7 +367,7 @@ public class MyBot extends TelegramLongPollingBot {
         double pct = (diff / oldPrice) * 100;
         String icon = diff > 0 ? "↗️" : "↘️";
         String sign = diff > 0 ? "+" : "";
-        return String.format("   ▫️ *%s:* %,.0f VNĐ _(%s %s%,.0f VNĐ | %s%,.2f%%)_\n", 
+        return String.format("   ▫️ *%s:* %,.0f VNĐ _(%s %s%,.0f VNĐ | %s%,.2f%%)_\n",
                 label, oldPrice, icon, sign, diff, sign, pct);
     }
 }
